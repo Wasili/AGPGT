@@ -278,7 +278,7 @@ void Ass3::OnMouseMove(WPARAM btnState, int x, int y)
 	mLastMousePos.y = y;
 }
 
-void GenerateCylinderCap(GeometryGenerator::MeshData &meshData, int sliceCount, float radius, float yPos) 
+void GenerateCylinderCap(GeometryGenerator::MeshData &meshData, int sliceCount, float radius, float yPos, bool bottomCap)
 {
 	float theta = 2.0f*XM_PI / sliceCount;
 
@@ -294,27 +294,44 @@ void GenerateCylinderCap(GeometryGenerator::MeshData &meshData, int sliceCount, 
 
 		meshData.Vertices.push_back(vertex);
 	}
-	
+
 
 	int lastVertex = (meshData.Vertices.size() - sliceCount);
-	for (size_t i = 0; i < sliceCount; i++)
+	if (bottomCap) {
+		for (size_t i = 0; i < sliceCount; i++)
+		{
+			meshData.Indices.push_back(lastVertex);
+			meshData.Indices.push_back((meshData.Vertices.size() - sliceCount) - 1);
+			if (i == sliceCount - 1) {
+				meshData.Indices.push_back((meshData.Vertices.size() - sliceCount));
+			}
+			else {
+				meshData.Indices.push_back(lastVertex + 1);
+			}
+			lastVertex++;
+		}
+	}
+	else
 	{
-		meshData.Indices.push_back(lastVertex);
-		meshData.Indices.push_back((meshData.Vertices.size() - sliceCount) - 1);
-		if (i == sliceCount - 1) {
-			meshData.Indices.push_back((meshData.Vertices.size() - sliceCount));
+		for (size_t i = 0; i < sliceCount; i++)
+		{
+			meshData.Indices.push_back((meshData.Vertices.size() - sliceCount) - 1);
+			meshData.Indices.push_back(lastVertex);
+			if (i == sliceCount - 1) {
+				meshData.Indices.push_back((meshData.Vertices.size() - sliceCount));
+			}
+			else {
+				meshData.Indices.push_back(lastVertex + 1);
+			}
+			lastVertex++;
 		}
-		else {
-			meshData.Indices.push_back(lastVertex + 1);
-		}
-		lastVertex++;
 	}
 }
 
 void GenerateCylinder(GeometryGenerator::MeshData &meshData, int sliceCount, float radius, float height, float yPos)
 {
-	GenerateCylinderCap(meshData, sliceCount, radius, yPos);
-	GenerateCylinderCap(meshData, sliceCount, radius, height);
+	GenerateCylinderCap(meshData, sliceCount, radius, yPos, false);
+	GenerateCylinderCap(meshData, sliceCount, radius, height, true);
 
 	int lastVertex = 1;
 	for (size_t i = 0; i < sliceCount; i++)
@@ -341,7 +358,7 @@ void GenerateCylinder(GeometryGenerator::MeshData &meshData, int sliceCount, flo
 			meshData.Indices.push_back(lastVertex + 1);
 		}
 		if (i == sliceCount - 1) {
-			meshData.Indices.push_back(lastVertex - (sliceCount*2));
+			meshData.Indices.push_back(lastVertex - (sliceCount * 2));
 		}
 		else {
 			meshData.Indices.push_back(lastVertex - sliceCount);
