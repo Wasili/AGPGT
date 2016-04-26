@@ -86,7 +86,7 @@ fxgroup
                 //   o1.x <- <VS return value>.Tex.x; o1.y <- <VS return value>.Tex.y; 
                 //   o0.x <- <VS return value>.PosH.x; o0.y <- <VS return value>.PosH.y; o0.z <- <VS return value>.PosH.z; o0.w <- <VS return value>.PosH.w
                 //
-                #line 34 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 34 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // r1.x <- vout.PosH.x
@@ -141,7 +141,7 @@ fxgroup
                 //   v1.x <- pin.Tex.x; v1.y <- pin.Tex.y; 
                 //   o0.x <- <PS return value>.x; o0.y <- <PS return value>.y; o0.z <- <PS return value>.z; o0.w <- <PS return value>.w
                 //
-                #line 42 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 42 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 sample_indexable(texture2d)(float,float,float,float) o0.xyzw, v1.xyxx, t0.xyzw, s0
                 ret 
                 // Approximately 2 instruction slots used
@@ -210,7 +210,7 @@ fxgroup
                 //   o1.x <- <VS return value>.Tex.x; o1.y <- <VS return value>.Tex.y; 
                 //   o0.x <- <VS return value>.PosH.x; o0.y <- <VS return value>.PosH.y; o0.z <- <VS return value>.PosH.z; o0.w <- <VS return value>.PosH.w
                 //
-                #line 34 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 34 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // r1.x <- vout.PosH.x
@@ -266,7 +266,7 @@ fxgroup
                 //   v1.x <- pin.Tex.x; v1.y <- pin.Tex.y; 
                 //   o0.x <- <PS return value>.x; o0.y <- <PS return value>.y; o0.z <- <PS return value>.z; o0.w <- <PS return value>.w
                 //
-                #line 47 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 47 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.xyzw, s0  // r0.x <- c.x
                 
                 #line 50
@@ -340,7 +340,7 @@ fxgroup
                 //   o1.x <- <VS return value>.Tex.x; o1.y <- <VS return value>.Tex.y; 
                 //   o0.x <- <VS return value>.PosH.x; o0.y <- <VS return value>.PosH.y; o0.z <- <VS return value>.PosH.z; o0.w <- <VS return value>.PosH.w
                 //
-                #line 34 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 34 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // r1.x <- vout.PosH.x
@@ -396,7 +396,7 @@ fxgroup
                 //   v1.x <- pin.Tex.x; v1.y <- pin.Tex.y; 
                 //   o0.x <- <PS return value>.x; o0.y <- <PS return value>.y; o0.z <- <PS return value>.z; o0.w <- <PS return value>.w
                 //
-                #line 47 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 47 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.yxzw, s0  // r0.x <- c.y
                 
                 #line 50
@@ -470,7 +470,7 @@ fxgroup
                 //   o1.x <- <VS return value>.Tex.x; o1.y <- <VS return value>.Tex.y; 
                 //   o0.x <- <VS return value>.PosH.x; o0.y <- <VS return value>.PosH.y; o0.z <- <VS return value>.PosH.z; o0.w <- <VS return value>.PosH.w
                 //
-                #line 34 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 34 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // r1.x <- vout.PosH.x
@@ -526,7 +526,7 @@ fxgroup
                 //   v1.x <- pin.Tex.x; v1.y <- pin.Tex.y; 
                 //   o0.x <- <PS return value>.x; o0.y <- <PS return value>.y; o0.z <- <PS return value>.z; o0.w <- <PS return value>.w
                 //
-                #line 47 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 47 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.zxyw, s0  // r0.x <- c.z
                 
                 #line 50
@@ -600,7 +600,7 @@ fxgroup
                 //   o1.x <- <VS return value>.Tex.x; o1.y <- <VS return value>.Tex.y; 
                 //   o0.x <- <VS return value>.PosH.x; o0.y <- <VS return value>.PosH.y; o0.z <- <VS return value>.PosH.z; o0.w <- <VS return value>.PosH.w
                 //
-                #line 34 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 34 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // r1.x <- vout.PosH.x
@@ -656,7 +656,7 @@ fxgroup
                 //   v1.x <- pin.Tex.x; v1.y <- pin.Tex.y; 
                 //   o0.x <- <PS return value>.x; o0.y <- <PS return value>.y; o0.z <- <PS return value>.z; o0.w <- <PS return value>.w
                 //
-                #line 47 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
+                #line 47 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\DebugTexture.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.wxyz, s0  // r0.x <- c.w
                 
                 #line 50

@@ -114,7 +114,7 @@ fxgroup
                 //   o1.x <- <VS return value>.ToFarPlane.x; o1.y <- <VS return value>.ToFarPlane.y; o1.z <- <VS return value>.ToFarPlane.z; 
                 //   o0.x <- <VS return value>.PosH.x; o0.y <- <VS return value>.PosH.y; o0.z <- <VS return value>.PosH.z; o0.w <- <VS return value>.PosH.w
                 //
-                #line 61 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\Ssao.fx"
+                #line 61 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\Ssao.fx"
                 mov r0.xyz, v0.xyzx  // r0.x <- vout.PosH.x; r0.y <- vout.PosH.y; r0.z <- vout.PosH.z
                 mov r0.w, l(1.000000)  // r0.w <- vout.PosH.w
                 
@@ -202,7 +202,7 @@ fxgroup
                 //   v2.x <- pin.Tex.x; v2.y <- pin.Tex.y; 
                 //   o0.x <- <PS return value>.x; o0.y <- <PS return value>.y; o0.z <- <PS return value>.z; o0.w <- <PS return value>.w
                 //
-                #line 108 "D:\School\HvA_jaar_3\Game Technology\Advanced Graphics Programming\cancer\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\Ssao.fx"
+                #line 108 "D:\HvA\Game Technology\Advanced Graphics Programming\AGP Github\AGPGT\LunaCh1_10\Chapter 23 Meshes\MeshView\FX\Ssao.fx"
                 mov r0.x, l(14)  // r0.x <- gSampleCount
                 
                 #line 117
