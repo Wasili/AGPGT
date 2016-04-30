@@ -10,6 +10,8 @@ ID3D11RasterizerState* RenderStates::CullClockwiseRS = 0;
 
 ID3D11BlendState*      RenderStates::AlphaToCoverageBS = 0;
 ID3D11BlendState*      RenderStates::TransparentBS = 0;
+ID3D11BlendState*      RenderStates::TransparentAdditiveBS = 0;
+ID3D11BlendState*      RenderStates::TransparentMultiBS = 0;
 ID3D11BlendState*      RenderStates::NoRenderTargetWritesBS = 0;
 
 ID3D11DepthStencilState* RenderStates::MarkMirrorDSS = 0;
@@ -18,18 +20,6 @@ ID3D11DepthStencilState* RenderStates::NoDoubleBlendDSS = 0;
 
 void RenderStates::InitAll(ID3D11Device* device)
 {
-	//
-	// WireframeRS
-	//
-	D3D11_RASTERIZER_DESC wireframeDesc;
-	ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
-	wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
-	wireframeDesc.CullMode = D3D11_CULL_BACK;
-	wireframeDesc.FrontCounterClockwise = false;
-	wireframeDesc.DepthClipEnable = true;
-
-	HR(device->CreateRasterizerState(&wireframeDesc, &WireframeRS));
-
 	//
 	// NoCullRS
 	//
@@ -75,19 +65,58 @@ void RenderStates::InitAll(ID3D11Device* device)
 	//
 
 	D3D11_BLEND_DESC transparentDesc = { 0 };
+	transparentDesc.AlphaToCoverageEnable = true;
+	transparentDesc.IndependentBlendEnable = false;
+
+
+	transparentDesc.RenderTarget[0].BlendEnable = true;
+	transparentDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ZERO;
+	transparentDesc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_COLOR;
+	transparentDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	transparentDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	transparentDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	transparentDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	transparentDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	HR(device->CreateBlendState(&transparentDesc, &TransparentBS));
+
+	//
+	// TransparentAdditiveBS
+	//
+
+	D3D11_BLEND_DESC transparentAdditiveDesc = { 0 };
 	transparentDesc.AlphaToCoverageEnable = false;
 	transparentDesc.IndependentBlendEnable = false;
 
 	transparentDesc.RenderTarget[0].BlendEnable = true;
-	transparentDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	transparentDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	transparentDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	transparentDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	transparentDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	transparentDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	transparentDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	transparentDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	transparentDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	HR(device->CreateBlendState(&transparentAdditiveDesc, &TransparentAdditiveBS));
+
+	//
+	// TransparentMultiBS
+	//
+
+	D3D11_BLEND_DESC transparentMultiDesc = { 0 };
+	transparentDesc.AlphaToCoverageEnable = false;
+	transparentDesc.IndependentBlendEnable = false;
+
+	transparentDesc.RenderTarget[0].BlendEnable = true;
+	transparentDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ZERO;
+	transparentDesc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_COLOR;
 	transparentDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	transparentDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	transparentDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 	transparentDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	transparentDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	HR(device->CreateBlendState(&transparentDesc, &TransparentBS));
+	HR(device->CreateBlendState(&transparentMultiDesc, &TransparentMultiBS));
 
 	//
 	// NoRenderTargetWritesBS
@@ -157,31 +186,6 @@ void RenderStates::InitAll(ID3D11Device* device)
 	drawReflectionDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
 	HR(device->CreateDepthStencilState(&drawReflectionDesc, &DrawReflectionDSS));
-
-	//
-	// NoDoubleBlendDSS
-	//
-
-	D3D11_DEPTH_STENCIL_DESC noDoubleBlendDesc;
-	noDoubleBlendDesc.DepthEnable = true;
-	noDoubleBlendDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	noDoubleBlendDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	noDoubleBlendDesc.StencilEnable = true;
-	noDoubleBlendDesc.StencilReadMask = 0xff;
-	noDoubleBlendDesc.StencilWriteMask = 0xff;
-
-	noDoubleBlendDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	noDoubleBlendDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	noDoubleBlendDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
-	noDoubleBlendDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-
-	// We are not rendering backfacing polygons, so these settings do not matter.
-	noDoubleBlendDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	noDoubleBlendDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	noDoubleBlendDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
-	noDoubleBlendDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-
-	HR(device->CreateDepthStencilState(&noDoubleBlendDesc, &NoDoubleBlendDSS));
 }
 
 void RenderStates::DestroyAll()
@@ -192,6 +196,8 @@ void RenderStates::DestroyAll()
 
 	ReleaseCOM(AlphaToCoverageBS);
 	ReleaseCOM(TransparentBS);
+	ReleaseCOM(TransparentAdditiveBS);
+	ReleaseCOM(TransparentMultiBS);
 	ReleaseCOM(NoRenderTargetWritesBS);
 
 	ReleaseCOM(MarkMirrorDSS);

@@ -23,6 +23,8 @@ public:
 	// Blend states
 	static ID3D11BlendState* AlphaToCoverageBS;
 	static ID3D11BlendState* TransparentBS;
+	static ID3D11BlendState* TransparentAdditiveBS;
+	static ID3D11BlendState* TransparentMultiBS;
 	static ID3D11BlendState* NoRenderTargetWritesBS;
 
 	// Depth/stencil states
