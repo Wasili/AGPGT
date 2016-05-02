@@ -87,6 +87,11 @@ private:
 	float mRadius;
 
 	POINT mLastMousePos;
+
+	XMFLOAT4 spotDiffuse;
+	XMFLOAT4 spotSpecular;
+	XMFLOAT4 pointDiffuse;
+	XMFLOAT4 pointSpecular;
 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
@@ -155,6 +160,12 @@ LightingApp::LightingApp(HINSTANCE hInstance)
 	mWavesMat.Ambient  = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
 	mWavesMat.Diffuse  = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
 	mWavesMat.Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 96.0f);
+
+	spotDiffuse = mSpotLight.Diffuse;
+	spotSpecular = mSpotLight.Specular;
+
+	pointDiffuse = mPointLight.Diffuse;
+	pointSpecular = mPointLight.Specular;
 }
 
 LightingApp::~LightingApp()
@@ -193,111 +204,139 @@ void LightingApp::OnResize()
 
 bool toon = false;
 
-void SetToonShading(XMFLOAT4 &diffuse, XMFLOAT4 &specular)
+void SetToonShading(XMFLOAT4 &diffuseTracker, XMFLOAT4 &diffuse, XMFLOAT4 &specularTracker, XMFLOAT4 &specular)
 {
-	if (diffuse.x <= 0.0F) diffuse.x = 0.4F;
-	else if (diffuse.x > 0.0F && diffuse.x <= 0.5F) diffuse.x = 0.6F;
-	else if (diffuse.x > 0.5F && diffuse.x <= 1.0F) diffuse.x = 1.0F;
+	if (diffuseTracker.x <= 0.0F) diffuse.x = 0.4F;
+	else if (diffuseTracker.x > 0.0F && diffuseTracker.x <= 0.5F) diffuse.x = 0.6F;
+	else if (diffuseTracker.x > 0.5F && diffuseTracker.x <= 1.0F) diffuse.x = 1.0F;
 
-	if (diffuse.y <= 0.0F) diffuse.y = 0.4F;
-	else if (diffuse.y > 0.0F && diffuse.y <= 0.5F) diffuse.y = 0.6F;
-	else if (diffuse.y > 0.5F && diffuse.y <= 1.0F) diffuse.y = 1.0F;
+	if (diffuseTracker.y <= 0.0F) diffuseTracker.y = 0.4F;
+	else if (diffuseTracker.y > 0.0F && diffuseTracker.y <= 0.5F) diffuse.y = 0.6F;
+	else if (diffuseTracker.y > 0.5F && diffuseTracker.y <= 1.0F) diffuse.y = 1.0F;
 
-	if (diffuse.z <= 0.0F) diffuse.z = 0.4F;
-	else if (diffuse.z > 0.0F && diffuse.z <= 0.5F) diffuse.z = 0.6F;
-	else if (diffuse.z > 0.5F && diffuse.z <= 1.0F) diffuse.z = 1.0F;
+	if (diffuseTracker.z <= 0.0F) diffuse.z = 0.4F;
+	else if (diffuseTracker.z > 0.0F && diffuseTracker.z <= 0.5F) diffuse.z = 0.6F;
+	else if (diffuseTracker.z > 0.5F && diffuseTracker.z <= 1.0F) diffuse.z = 1.0F;
 
-	if (diffuse.w >= 0.0F && diffuse.w <= 0.1F) diffuse.w = 0.0F;
-	else if (diffuse.w > 0.1F && diffuse.w <= 0.8F) diffuse.w = 0.5F;
-	else if (diffuse.w > 0.8F && diffuse.w <= 1.0F) diffuse.w = 0.8F;
+	if (diffuseTracker.w <= 0.0F) diffuse.w = 0.4F;
+	else if (diffuseTracker.w > 0.1F && diffuseTracker.w <= 0.5F) diffuse.w = 0.6F;
+	else if (diffuseTracker.w > 0.5F && diffuseTracker.w <= 1.0F) diffuse.w = 1.0F;
 
 
-	if (specular.x >= 0.0F && specular.x <= 0.1F) specular.x = 0.0F;
-	else if (specular.x > 0.1F && specular.x <= 0.8F) specular.x = 0.5F;
-	else if (specular.x > 0.8F && specular.x <= 1.0F) specular.x = 0.8F;
+	if (specularTracker.x >= 0.0F && specularTracker.x <= 0.1F) specular.x = 0.0F;
+	else if (specularTracker.x > 0.1F && specularTracker.x <= 0.8F) specular.x = 0.5F;
+	else if (specularTracker.x > 0.8F && specularTracker.x <= 1.0F) specular.x = 0.8F;
 
-	if (specular.y >= 0.0F && specular.y <= 0.1F) specular.y = 0.0F;
-	else if (specular.y > 0.1F && specular.y <= 0.8F) specular.y = 0.5F;
-	else if (specular.y > 0.8F && specular.y <= 1.0F) specular.y = 0.8F;
+	if (specularTracker.y >= 0.0F && specularTracker.y <= 0.1F) specular.y = 0.0F;
+	else if (specularTracker.y > 0.1F && specularTracker.y <= 0.8F) specular.y = 0.5F;
+	else if (specularTracker.y > 0.8F && specularTracker.y <= 1.0F) specular.y = 0.8F;
 
-	if (specular.z >= 0.0F && specular.z <= 0.1F) specular.z = 0.0F;
-	else if (specular.z > 0.1F && specular.z <= 0.8F) specular.z = 0.5F;
-	else if (specular.z > 0.8F && specular.z <= 1.0F) specular.z = 0.8F;
+	if (specularTracker.z >= 0.0F && specularTracker.z <= 0.1F) specular.z = 0.0F;
+	else if (specularTracker.z > 0.1F && specularTracker.z <= 0.8F) specular.z = 0.5F;
+	else if (specularTracker.z > 0.8F && specularTracker.z <= 1.0F) specular.z = 0.8F;
 
-	if (specular.w >= 0.0F && specular.w <= 0.1F) specular.w = 0.0F;
-	else if (specular.w > 0.1F && specular.w <= 0.8F) specular.w = 0.5F;
-	else if (specular.w > 0.8F && specular.w <= 1.0F) specular.w = 0.8F;
+	if (specularTracker.w >= 0.0F && specularTracker.w <= 0.1F) specular.w = 0.0F;
+	else if (specularTracker.w > 0.1F && specularTracker.w <= 0.8F) specular.w = 0.5F;
+	else if (specularTracker.w > 0.8F && specularTracker.w <= 1.0F) specular.w = 0.8F;
 }
 
 void LightingApp::UpdateScene(float dt)
 {
 	if (GetAsyncKeyState('Q')) {
-		mPointLight.Range -= 1;
+		mPointLight.Range -= 10 * dt;
 	}
 	if (GetAsyncKeyState('E')) {
-		mPointLight.Range += 1;
+		mPointLight.Range += 10 * dt;
 	}
 	if (GetAsyncKeyState('A')) {
-		mSpotLight.Range -= 1;
+		mSpotLight.Range -= 10 * dt;
 	}
 	if (GetAsyncKeyState('D')) {
-		mSpotLight.Range += 1;
+		mSpotLight.Range += 10 * dt;
 	}
 	if (GetAsyncKeyState('1')) {
-		mPointLight.Specular.x += 0.1f;
-		mSpotLight.Specular.x += 0.1f;
+		if (pointSpecular.x < 2.0F)
+			pointSpecular.x += 1.0f * dt;
+		if (spotSpecular.x < 2.0F)
+			spotSpecular.x += 1.0f * dt;
 	}
 	if (GetAsyncKeyState('2')) {
-		mPointLight.Specular.y += 0.1f;
-		mSpotLight.Specular.y += 0.1f;
+		if (pointSpecular.y < 2.0F)
+			pointSpecular.y += 1.0f * dt;
+		if (spotSpecular.y < 2.0F)
+			spotSpecular.y += 1.0f * dt;
 	}
 	if (GetAsyncKeyState('3')) {
-		mPointLight.Specular.z += 0.1f;
-		mSpotLight.Specular.z += 0.1f;
+		if (pointSpecular.z < 2.0F)
+			pointSpecular.z += 1.0f * dt;
+		if (spotSpecular.z < 2.0F)
+			spotSpecular.z += 1.0f * dt;
 	}
 	if (GetAsyncKeyState('Z')) {
-		mPointLight.Specular.x -= 0.1f;
-		mSpotLight.Specular.x -= 0.1f;
+		if (pointSpecular.x > -2.0F)
+			pointSpecular.x -= 1.0f * dt;
+		if (spotSpecular.x > -2.0F)
+			spotSpecular.x -= 1.0f * dt;
 	}
 	if (GetAsyncKeyState('X')) {
-		mPointLight.Specular.y -= 0.1f;
-		mSpotLight.Specular.y -= 0.1f;
+		if (pointSpecular.y > -2.0F)
+			pointSpecular.y -= 1.0f * dt;
+		if (spotSpecular.y > -2.0F)
+			spotSpecular.y -= 1.0f * dt;
 	}
 	if (GetAsyncKeyState('C')) {
-		mPointLight.Specular.z -= 0.1f;
-		mSpotLight.Specular.z -= 0.1f;
+		if (pointSpecular.z > -2.0F)
+			pointSpecular.z -= 1.0f * dt;
+		if (spotSpecular.z > -2.0F)
+			spotSpecular.z -= 1.0f * dt;
 	}
 	if (GetAsyncKeyState('4')) {
-		mSpotLight.Diffuse.x += 0.1f;
-		mPointLight.Diffuse.x += 0.1f;
+		if (pointDiffuse.x < 2.0F)
+			pointDiffuse.x += 1.0f * dt;
+		if (spotDiffuse.x < 2.0F)
+			spotDiffuse.x += 1.0f * dt;
 	}
 	if (GetAsyncKeyState('5')) {
-		mSpotLight.Diffuse.y += 0.1f;
-		mPointLight.Diffuse.y += 0.1f;
+		if (pointDiffuse.y < 2.0F)
+			pointDiffuse.y += 1.0f * dt;
+		if (spotDiffuse.y < 2.0F)
+			spotDiffuse.y += 1.0f * dt;
 	}
 	if (GetAsyncKeyState('6')) {
-		mSpotLight.Diffuse.z += 0.1f;
-		mPointLight.Diffuse.z += 0.1f;
+		if (pointDiffuse.z < 2.0F)
+			pointDiffuse.z += 1.0f * dt;
+		if (spotDiffuse.z < 2.0F)
+			spotDiffuse.z += 1.0f * dt;
 	}
 	if (GetAsyncKeyState('7')) {
-		mSpotLight.Diffuse.w += 0.1f;
-		mPointLight.Diffuse.w += 0.1f;
+		if (pointDiffuse.w < 2.0F)
+			pointDiffuse.w += 1.0f * dt;
+		if (spotDiffuse.w < 2.0F)
+			spotDiffuse.w += 1.0f * dt;
 	}
 	if (GetAsyncKeyState('V')) {
-		mSpotLight.Diffuse.x -= 0.1f;
-		mPointLight.Diffuse.x -= 0.1f;
+		if (pointDiffuse.x > -2.0F)
+		pointDiffuse.x -= 1.0f * dt;
+		if (spotDiffuse.x > -2.0F)
+		spotDiffuse.x -= 1.0f * dt;
 	}
 	if (GetAsyncKeyState('B')) {
-		mSpotLight.Diffuse.y -= 0.1f;
-		mPointLight.Diffuse.y -= 0.1f;
+		if (pointDiffuse.y > -2.0F)
+		pointDiffuse.y -= 1.0f * dt;
+		if (spotDiffuse.y > -2.0F)
+		spotDiffuse.y -= 1.0f * dt;
 	}
 	if (GetAsyncKeyState('N')) {
-		mSpotLight.Diffuse.z -= 0.1f;
-		mPointLight.Diffuse.z -= 0.1f;
+		if (pointDiffuse.z > -2.0F)
+		pointDiffuse.z -= 1.0f * dt;
+		if (spotDiffuse.z > -2.0F)
+		spotDiffuse.z -= 1.0f * dt;
 	}
 	if (GetAsyncKeyState('M')) {
-		mSpotLight.Diffuse.w -= 0.1f;
-		mPointLight.Diffuse.w -= 0.1f;
+		if (pointDiffuse.w > -2.0F)
+		pointDiffuse.w -= 1.0f * dt;
+		if (spotDiffuse.w > -2.0F)
+		spotDiffuse.w -= 1.0f * dt;
 	}
 
 	if (GetAsyncKeyState('T')) {
@@ -308,9 +347,15 @@ void LightingApp::UpdateScene(float dt)
 	}
 
 	if (toon) {
-		SetToonShading(mPointLight.Diffuse, mPointLight.Specular);
-		SetToonShading(mSpotLight.Diffuse, mSpotLight.Specular);
-		//SetToonShading(mDirLight.Diffuse, mDirLight.Specular);
+		SetToonShading(pointDiffuse, mPointLight.Diffuse, pointSpecular, mPointLight.Specular);
+		SetToonShading(spotDiffuse, mSpotLight.Diffuse, spotSpecular, mSpotLight.Specular);
+	}
+	else {
+		mPointLight.Diffuse = pointDiffuse;
+		mPointLight.Specular = pointSpecular;
+
+		mSpotLight.Diffuse = spotDiffuse;
+		mSpotLight.Specular = spotSpecular;
 	}
 
 	// Convert Spherical to Cartesian coordinates.
