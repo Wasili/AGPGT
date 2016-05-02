@@ -130,7 +130,7 @@ bool CrateApp::Init()
 	InputLayouts::InitAll(md3dDevice);
 
 	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice, 
-		L"Textures/die.dds", 0, 0, &mDiffuseMapSRV, 0 ));
+		L"Textures/phone.dds", 0, 0, &mDiffuseMapSRV, 0 ));
  
 	BuildGeometryBuffers();
 
@@ -257,21 +257,90 @@ void CrateApp::OnMouseMove(WPARAM btnState, int x, int y)
 
 void CrateApp::BuildGeometryBuffers()
 {
-	GeometryGenerator::MeshData box;
+	GeometryGenerator::Vertex verts[24];
 
-	GeometryGenerator geoGen;
-	geoGen.CreateBox(1.0f, 1.0f, 1.0f, box);
+	float w2 = 0.5f*1.6f;
+	float h2 = 0.5f*3.0f;
+	float d2 = 0.5f*0.2f;
+
+	// Fill in the front face vertex data.
+	verts[0] = GeometryGenerator::Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 1.0f);
+	verts[1] = GeometryGenerator::Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 0.0f);
+	verts[2] = GeometryGenerator::Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	verts[3] = GeometryGenerator::Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+
+	// Fill in the back face vertex data.
+	verts[4] = GeometryGenerator::Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 1.0f);
+	verts[5] = GeometryGenerator::Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	verts[6] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	verts[7] = GeometryGenerator::Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 0.0f);
+
+	// Fill in the top face vertex data.
+	verts[8] = GeometryGenerator::Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+	verts[9] = GeometryGenerator::Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	verts[10] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.0f);
+	verts[11] = GeometryGenerator::Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.1f);
+
+	// Fill in the bottom face vertex data.
+	verts[12] = GeometryGenerator::Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.1f, 0.1f);
+	verts[13] = GeometryGenerator::Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+	verts[14] = GeometryGenerator::Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	verts[15] = GeometryGenerator::Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.1f, 0.0f);
+
+	// Fill in the left face vertex data.
+	verts[16] = GeometryGenerator::Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.1f);
+	verts[17] = GeometryGenerator::Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	verts[18] = GeometryGenerator::Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.1f, 0.0f);
+	verts[19] = GeometryGenerator::Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.1f, 0.1f);
+
+	// Fill in the right face vertex data.
+	verts[20] = GeometryGenerator::Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.1f);
+	verts[21] = GeometryGenerator::Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	verts[22] = GeometryGenerator::Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.1f, 0.0f);
+	verts[23] = GeometryGenerator::Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.1f, 0.1f);
+
+	//
+	// Create the indices.
+	//
+
+	UINT inds[36];
+
+	// Fill in the front face index data
+	inds[0] = 0; inds[1] = 1; inds[2] = 2;
+	inds[3] = 0; inds[4] = 2; inds[5] = 3;
+
+	// Fill in the back face index data
+	inds[6] = 4; inds[7] = 5; inds[8] = 6;
+	inds[9] = 4; inds[10] = 6; inds[11] = 7;
+
+	// Fill in the top face index data
+	inds[12] = 8; inds[13] = 9; inds[14] = 10;
+	inds[15] = 8; inds[16] = 10; inds[17] = 11;
+
+	// Fill in the bottom face index data
+	inds[18] = 12; inds[19] = 13; inds[20] = 14;
+	inds[21] = 12; inds[22] = 14; inds[23] = 15;
+
+	// Fill in the left face index data
+	inds[24] = 16; inds[25] = 17; inds[26] = 18;
+	inds[27] = 16; inds[28] = 18; inds[29] = 19;
+
+	// Fill in the right face index data
+	inds[30] = 20; inds[31] = 21; inds[32] = 22;
+	inds[33] = 20; inds[34] = 22; inds[35] = 23;
+
+
 
 	// Cache the vertex offsets to each object in the concatenated vertex buffer.
 	mBoxVertexOffset      = 0;
 
 	// Cache the index count of each object.
-	mBoxIndexCount      = box.Indices.size();
+	mBoxIndexCount      = sizeof(inds) / sizeof(UINT);
 
 	// Cache the starting index for each object in the concatenated index buffer.
 	mBoxIndexOffset      = 0;
 	
-	UINT totalVertexCount = box.Vertices.size();
+	UINT totalVertexCount = sizeof(verts) / sizeof(GeometryGenerator::Vertex);
 
 	UINT totalIndexCount = mBoxIndexCount;
 
@@ -280,14 +349,15 @@ void CrateApp::BuildGeometryBuffers()
 	// vertices of all the meshes into one vertex buffer.
 	//
 
+
 	std::vector<Vertex::Basic32> vertices(totalVertexCount);
 
 	UINT k = 0;
-	for(size_t i = 0; i < box.Vertices.size(); ++i, ++k)
+	for (size_t i = 0; i < totalVertexCount; ++i, ++k)
 	{
-		vertices[k].Pos    = box.Vertices[i].Position;
-		vertices[k].Normal = box.Vertices[i].Normal;
-		vertices[k].Tex    = box.Vertices[i].TexC;
+		vertices[k].Pos = verts[i].Position;
+		vertices[k].Normal = verts[i].Normal;
+		vertices[k].Tex = verts[i].TexC;
 	}
 
     D3D11_BUFFER_DESC vbd;
@@ -304,8 +374,12 @@ void CrateApp::BuildGeometryBuffers()
 	// Pack the indices of all the meshes into one index buffer.
 	//
 
-	std::vector<UINT> indices;
-	indices.insert(indices.end(), box.Indices.begin(), box.Indices.end());
+
+	std::vector<UINT> indices(totalIndexCount);
+	for (size_t i = 0; i < mBoxIndexCount; i++)
+	{
+		indices[i] = inds[i];
+	}
 
 	D3D11_BUFFER_DESC ibd;
     ibd.Usage = D3D11_USAGE_IMMUTABLE;
