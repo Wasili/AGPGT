@@ -40,6 +40,7 @@ private:
 	ID3D11Buffer* mBoxIB;
 
 	ID3D11ShaderResourceView* mDiffuseMapSRV;
+	ID3D11ShaderResourceView* mPhotoDiffuseMapSRV;
 
 	DirectionalLight mDirLights[3];
 	Material mBoxMat;
@@ -53,6 +54,10 @@ private:
 	int mBoxVertexOffset;
 	UINT mBoxIndexOffset;
 	UINT mBoxIndexCount;
+
+	int mScreenVertexOffset;
+	UINT mScreenIndexOffset;
+	UINT mScreenIndexCount;
 
 	XMFLOAT3 mEyePosW;
 
@@ -81,7 +86,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
  
 
 CrateApp::CrateApp(HINSTANCE hInstance)
-: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mDiffuseMapSRV(0), mEyePosW(0.0f, 0.0f, 0.0f), 
+: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mDiffuseMapSRV(0), mPhotoDiffuseMapSRV(0), mEyePosW(0.0f, 0.0f, 0.0f),
   mTheta(1.3f*MathHelper::Pi), mPhi(0.4f*MathHelper::Pi), mRadius(2.5f)
 {
 	mMainWndCaption = L"Crate Demo";
@@ -115,6 +120,7 @@ CrateApp::~CrateApp()
 	ReleaseCOM(mBoxVB);
 	ReleaseCOM(mBoxIB);
 	ReleaseCOM(mDiffuseMapSRV);
+	ReleaseCOM(mPhotoDiffuseMapSRV);
 
 	Effects::DestroyAll();
 	InputLayouts::DestroyAll();
@@ -131,6 +137,9 @@ bool CrateApp::Init()
 
 	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice, 
 		L"Textures/phone.dds", 0, 0, &mDiffuseMapSRV, 0 ));
+
+	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
+		L"Textures/photo.dds", 0, 0, &mPhotoDiffuseMapSRV, 0));
  
 	BuildGeometryBuffers();
 
@@ -201,10 +210,14 @@ void CrateApp::DrawScene()
 		Effects::BasicFX->SetWorldViewProj(worldViewProj);
 		Effects::BasicFX->SetTexTransform(XMLoadFloat4x4(&mTexTransform));
 		Effects::BasicFX->SetMaterial(mBoxMat);
-		Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
 
+		Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
 		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-		md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
+		md3dImmediateContext->Draw(36, mBoxVertexOffset);
+
+		Effects::BasicFX->SetDiffuseMap(mPhotoDiffuseMapSRV);
+		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->Draw(6, mScreenVertexOffset);
     }
 
 	HR(mSwapChain->Present(0, 0));
@@ -257,7 +270,7 @@ void CrateApp::OnMouseMove(WPARAM btnState, int x, int y)
 
 void CrateApp::BuildGeometryBuffers()
 {
-	GeometryGenerator::Vertex verts[24];
+	GeometryGenerator::Vertex verts[42];
 
 	float w2 = 0.5f*1.6f;
 	float h2 = 0.5f*3.0f;
@@ -267,43 +280,70 @@ void CrateApp::BuildGeometryBuffers()
 	verts[0] = GeometryGenerator::Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 1.0f);
 	verts[1] = GeometryGenerator::Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 	verts[2] = GeometryGenerator::Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	verts[3] = GeometryGenerator::Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+
+	verts[3] = GeometryGenerator::Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.5f, 1.0f);
+	verts[4] = GeometryGenerator::Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	verts[5] = GeometryGenerator::Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Fill in the back face vertex data.
-	verts[4] = GeometryGenerator::Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 1.0f);
-	verts[5] = GeometryGenerator::Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	verts[6] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	verts[7] = GeometryGenerator::Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 0.0f);
+	verts[6] = GeometryGenerator::Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 1.0f);
+	verts[7] = GeometryGenerator::Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	verts[8] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+	verts[9] = GeometryGenerator::Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 1.0f);
+	verts[10] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	verts[11] = GeometryGenerator::Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 
 	// Fill in the top face vertex data.
-	verts[8] = GeometryGenerator::Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-	verts[9] = GeometryGenerator::Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	verts[10] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.0f);
-	verts[11] = GeometryGenerator::Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.1f);
+	verts[12] = GeometryGenerator::Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+	verts[13] = GeometryGenerator::Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	verts[14] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.0f);
+
+	verts[15] = GeometryGenerator::Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+	verts[16] = GeometryGenerator::Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.0f);
+	verts[17] = GeometryGenerator::Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.1f);
 
 	// Fill in the bottom face vertex data.
-	verts[12] = GeometryGenerator::Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.1f, 0.1f);
-	verts[13] = GeometryGenerator::Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-	verts[14] = GeometryGenerator::Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	verts[15] = GeometryGenerator::Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.1f, 0.0f);
+	verts[18] = GeometryGenerator::Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.1f, 0.1f);
+	verts[19] = GeometryGenerator::Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+	verts[20] = GeometryGenerator::Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+	verts[21] = GeometryGenerator::Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.1f, 0.1f);
+	verts[22] = GeometryGenerator::Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	verts[23] = GeometryGenerator::Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.1f, 0.0f);
 
 	// Fill in the left face vertex data.
-	verts[16] = GeometryGenerator::Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.1f);
-	verts[17] = GeometryGenerator::Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	verts[18] = GeometryGenerator::Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.1f, 0.0f);
-	verts[19] = GeometryGenerator::Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.1f, 0.1f);
+	verts[24] = GeometryGenerator::Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.1f);
+	verts[25] = GeometryGenerator::Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	verts[26] = GeometryGenerator::Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.1f, 0.0f);
+
+	verts[27] = GeometryGenerator::Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.1f);
+	verts[28] = GeometryGenerator::Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.1f, 0.0f);
+	verts[29] = GeometryGenerator::Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.1f, 0.1f);
 
 	// Fill in the right face vertex data.
-	verts[20] = GeometryGenerator::Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.1f);
-	verts[21] = GeometryGenerator::Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	verts[22] = GeometryGenerator::Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.1f, 0.0f);
-	verts[23] = GeometryGenerator::Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.1f, 0.1f);
+	verts[30] = GeometryGenerator::Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.1f);
+	verts[31] = GeometryGenerator::Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	verts[32] = GeometryGenerator::Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.1f, 0.0f);
+
+	verts[33] = GeometryGenerator::Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.1f);
+	verts[34] = GeometryGenerator::Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.1f, 0.0f);
+	verts[35] = GeometryGenerator::Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.1f, 0.1f);
+
+	//draw the phone screen
+	verts[36] = GeometryGenerator::Vertex(-w2 + 0.05f, -h2 + 0.24f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	verts[37] = GeometryGenerator::Vertex(-w2 + 0.05f, +h2 - 0.25f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	verts[38] = GeometryGenerator::Vertex(+w2 - 0.036f, +h2 - 0.25f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+	verts[39] = GeometryGenerator::Vertex(-w2 + 0.05f, -h2 + 0.24f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	verts[40] = GeometryGenerator::Vertex(+w2 - 0.036f, +h2 - 0.25f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	verts[41] = GeometryGenerator::Vertex(+w2 - 0.036f, -h2 + 0.24f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	//
 	// Create the indices.
 	//
 
-	UINT inds[36];
+	/*UINT inds[42];
 
 	// Fill in the front face index data
 	inds[0] = 0; inds[1] = 1; inds[2] = 2;
@@ -329,20 +369,27 @@ void CrateApp::BuildGeometryBuffers()
 	inds[30] = 20; inds[31] = 21; inds[32] = 22;
 	inds[33] = 20; inds[34] = 22; inds[35] = 23;
 
+	//phone screen index data
+	inds[36] = 24; inds[37] = 25; inds[38] = 26;
+	inds[39] = 24; inds[40] = 26; inds[41] = 27;*/
+
 
 
 	// Cache the vertex offsets to each object in the concatenated vertex buffer.
-	mBoxVertexOffset      = 0;
+	mBoxVertexOffset = 0;
+	mScreenVertexOffset = 36;
 
 	// Cache the index count of each object.
-	mBoxIndexCount      = sizeof(inds) / sizeof(UINT);
+	/*mBoxIndexCount = 36;
+	mScreenIndexCount = 6;*/
 
 	// Cache the starting index for each object in the concatenated index buffer.
-	mBoxIndexOffset      = 0;
+	/*mBoxIndexOffset = 0;
+	mScreenIndexOffset = 36;*/
 	
 	UINT totalVertexCount = sizeof(verts) / sizeof(GeometryGenerator::Vertex);
 
-	UINT totalIndexCount = mBoxIndexCount;
+	//UINT totalIndexCount = sizeof(inds) / sizeof(UINT);
 
 	//
 	// Extract the vertex elements we are interested in and pack the
@@ -375,8 +422,8 @@ void CrateApp::BuildGeometryBuffers()
 	//
 
 
-	std::vector<UINT> indices(totalIndexCount);
-	for (size_t i = 0; i < mBoxIndexCount; i++)
+	/*std::vector<UINT> indices(totalIndexCount);
+	for (size_t i = 0; i < totalIndexCount; i++)
 	{
 		indices[i] = inds[i];
 	}
@@ -389,6 +436,6 @@ void CrateApp::BuildGeometryBuffers()
     ibd.MiscFlags = 0;
     D3D11_SUBRESOURCE_DATA iinitData;
     iinitData.pSysMem = &indices[0];
-    HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mBoxIB));
+    HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mBoxIB));*/
 }
  
