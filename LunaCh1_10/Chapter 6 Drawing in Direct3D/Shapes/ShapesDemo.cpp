@@ -47,10 +47,11 @@ private:
 	ID3DX11Effect* mFX;
 	ID3DX11EffectTechnique* mTech;
 	ID3DX11EffectMatrixVariable* mfxWorldViewProj;
+	ID3DX11EffectScalarVariable* globalTime;
 
 	ID3D11InputLayout* mInputLayout;
 
-	ID3D11RasterizerState* mWireframeRS;
+	//ID3D11RasterizerState* mWireframeRS;
 
 	// Define transformations from local spaces to world space.
 	XMFLOAT4X4 mSphereWorld[10];
@@ -103,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 ShapesApp::ShapesApp(HINSTANCE hInstance)
 : D3DApp(hInstance), mVB(0), mIB(0), mFX(0), mTech(0),
-  mfxWorldViewProj(0), mInputLayout(0), mWireframeRS(0),
+  mfxWorldViewProj(0), mInputLayout(0), /*mWireframeRS(0),*/
   mTheta(1.5f*MathHelper::Pi), mPhi(0.1f*MathHelper::Pi), mRadius(15.0f)
 {
 	mMainWndCaption = L"Shapes Demo";
@@ -140,7 +141,7 @@ ShapesApp::~ShapesApp()
 	ReleaseCOM(mIB);
 	ReleaseCOM(mFX);
 	ReleaseCOM(mInputLayout);
-	ReleaseCOM(mWireframeRS);
+	//ReleaseCOM(mWireframeRS);
 }
 
 bool ShapesApp::Init()
@@ -152,14 +153,14 @@ bool ShapesApp::Init()
 	BuildFX();
 	BuildVertexLayout();
 
-	D3D11_RASTERIZER_DESC wireframeDesc;
+	/*D3D11_RASTERIZER_DESC wireframeDesc;
 	ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
 	wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
 	wireframeDesc.CullMode = D3D11_CULL_BACK;
 	wireframeDesc.FrontCounterClockwise = false;
 	wireframeDesc.DepthClipEnable = true;
 
-	HR(md3dDevice->CreateRasterizerState(&wireframeDesc, &mWireframeRS));
+	HR(md3dDevice->CreateRasterizerState(&wireframeDesc, &mWireframeRS));*/
 
 	return true;
 }
@@ -190,13 +191,15 @@ void ShapesApp::UpdateScene(float dt)
 
 void ShapesApp::DrawScene()
 {
+	globalTime->SetFloat(mTimer.TotalTime());
+
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	md3dImmediateContext->IASetInputLayout(mInputLayout);
     md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	md3dImmediateContext->RSSetState(mWireframeRS);
+	//md3dImmediateContext->RSSetState(mWireframeRS);
 
 	UINT stride = sizeof(Vertex);
     UINT offset = 0;
@@ -211,7 +214,14 @@ void ShapesApp::DrawScene()
  
     D3DX11_TECHNIQUE_DESC techDesc;
     mTech->GetDesc( &techDesc );
-    for(UINT p = 0; p < techDesc.Passes; ++p)
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		XMMATRIX world = XMLoadFloat4x4(&mGridWorld);
+		mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&(world*viewProj)));
+		mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->Draw(6, 0);
+	}
+    /*for(UINT p = 0; p < techDesc.Passes; ++p)
     {
 		// Draw the grid.
 		XMMATRIX world = XMLoadFloat4x4(&mGridWorld);
@@ -248,7 +258,7 @@ void ShapesApp::DrawScene()
 			mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 			md3dImmediateContext->DrawIndexed(mSphereIndexCount, mSphereIndexOffset, mSphereVertexOffset);
 		}
-    }
+    }*/
 
 	HR(mSwapChain->Present(0, 0));
 }
@@ -299,6 +309,41 @@ void ShapesApp::OnMouseMove(WPARAM btnState, int x, int y)
 }
 
 void ShapesApp::BuildGeometryBuffers()
+{
+	GeometryGenerator::Vertex verts[6];
+
+	// Fill in the front face vertex data.
+	verts[0] = GeometryGenerator::Vertex(+10.0f, -10.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f);
+	verts[1] = GeometryGenerator::Vertex(-10.0f, -10.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f);
+	verts[2] = GeometryGenerator::Vertex(-10.0f, +10.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.5f);
+
+	verts[3] = GeometryGenerator::Vertex(+10.0f, +10.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.5f, 1.0f);
+	verts[4] = GeometryGenerator::Vertex(+10.0f, -10.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.5f);
+	verts[5] = GeometryGenerator::Vertex(-10.0f, +10.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+	UINT totalVertexCount = sizeof(verts) / sizeof(GeometryGenerator::Vertex);
+
+	std::vector<Vertex> vertices(totalVertexCount);
+
+	UINT k = 0;
+	for (size_t i = 0; i < totalVertexCount; ++i, ++k)
+	{
+		vertices[k].Pos = verts[i].Position;
+		vertices[k].Color = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.ByteWidth = sizeof(Vertex) * totalVertexCount;
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA vinitData;
+	vinitData.pSysMem = &vertices[0];
+    HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mVB));
+}
+
+/*void ShapesApp::BuildGeometryBuffers()
 {
 	GeometryGenerator::MeshData box;
 	GeometryGenerator::MeshData grid;
@@ -405,7 +450,7 @@ void ShapesApp::BuildGeometryBuffers()
     D3D11_SUBRESOURCE_DATA iinitData;
     iinitData.pSysMem = &indices[0];
     HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mIB));
-}
+}*/
  
 void ShapesApp::BuildFX()
 {
@@ -424,6 +469,7 @@ void ShapesApp::BuildFX()
 
 	mTech    = mFX->GetTechniqueByName("ColorTech");
 	mfxWorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
+	globalTime = mFX->GetVariableByName("globalTime")->AsScalar();
 }
 
 void ShapesApp::BuildVertexLayout()
