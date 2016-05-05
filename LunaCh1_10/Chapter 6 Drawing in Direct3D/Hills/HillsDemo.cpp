@@ -13,8 +13,12 @@
 #include "d3dx11Effect.h"
 #include "GeometryGenerator.h"
 #include "MathHelper.h"
- 
-struct Vertex
+
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing fla
+
+struct MyVertex
 {
 	XMFLOAT3 Pos;
 	XMFLOAT4 Color;
@@ -54,7 +58,7 @@ private:
 	// Define transformations from local spaces to world space.
 	XMFLOAT4X4 mGridWorld;
 
-	UINT mGridIndexCount;
+	UINT mMeshIndexCount;
 
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
@@ -85,7 +89,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 HillsApp::HillsApp(HINSTANCE hInstance)
 : D3DApp(hInstance), mVB(0), mIB(0), mFX(0), mTech(0),
-  mfxWorldViewProj(0), mInputLayout(0), mGridIndexCount(0),
+  mfxWorldViewProj(0), mInputLayout(0), mMeshIndexCount(0),
   mTheta(1.5f*MathHelper::Pi), mPhi(0.1f*MathHelper::Pi), mRadius(200.0f)
 {
 	mMainWndCaption = L"Hills Demo";
@@ -152,7 +156,7 @@ void HillsApp::DrawScene()
     md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
  
-	UINT stride = sizeof(Vertex);
+	UINT stride = sizeof(MyVertex);
     UINT offset = 0;
     md3dImmediateContext->IASetVertexBuffers(0, 1, &mVB, &stride, &offset);
 	md3dImmediateContext->IASetIndexBuffer(mIB, DXGI_FORMAT_R32_UINT, 0);
@@ -171,7 +175,7 @@ void HillsApp::DrawScene()
 		// Draw the grid.
 		mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&worldViewProj));
 		mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-		md3dImmediateContext->DrawIndexed(mGridIndexCount, 0, 0);
+		md3dImmediateContext->DrawIndexed(mMeshIndexCount, 0, 0);
     }
 
 	HR(mSwapChain->Present(0, 0));
@@ -229,13 +233,52 @@ float HillsApp::GetHeight(float x, float z)const
 
 void HillsApp::BuildGeometryBuffers()
 {
-	GeometryGenerator::MeshData grid;
+	Assimp::Importer importer;
+	const aiScene *assScene = importer.ReadFile("models/structure.fbx", aiPostProcessSteps::aiProcess_CalcTangentSpace |
+																			aiPostProcessSteps::aiProcess_Triangulate |
+																			aiPostProcessSteps::aiProcess_JoinIdenticalVertices |
+																			aiPostProcessSteps::aiProcess_SortByPType);
+	
+	
+	
+	
+	//GeometryGenerator::MeshData grid;
  
-	GeometryGenerator geoGen;
+	//GeometryGenerator geoGen;
 
-	geoGen.CreateGrid(160.0f, 160.0f, 50, 50, grid);
+	//geoGen.CreateGrid(160.0f, 160.0f, 50, 50, grid);
 
-	mGridIndexCount = grid.Indices.size();
+	std::vector<UINT> indices;
+	std::vector<MyVertex> vertices;
+	for (size_t i = 0; i < assScene->mNumMeshes; i++)
+	{
+		aiMesh *assMesh = assScene->mMeshes[i];
+		for (size_t j = 0; j < assMesh->mNumVertices; j++)
+		{
+			MyVertex vertex;
+			vertex.Pos = XMFLOAT3(assMesh->mVertices[j].x, assMesh->mVertices[j].y, assMesh->mVertices[j].z);
+			if (assMesh->HasVertexColors(j))
+			{
+				vertex.Color = XMFLOAT4(assMesh->mColors[i][j].r, assMesh->mColors[i][j].g, assMesh->mColors[i][j].b, assMesh->mColors[i][j].a);
+			}
+			else
+			{
+				vertex.Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+			vertices.push_back(vertex);
+		}
+		for (size_t j = 0; j < assMesh->mNumFaces; j++)
+		{
+			aiFace assFace = assMesh->mFaces[j];
+			for (size_t f = 0; f < assFace.mNumIndices; f++)
+			{
+				indices.push_back(assFace.mIndices[f]);
+				mMeshIndexCount ++;
+			}
+		}
+
+	}
+
 
 	//
 	// Extract the vertex elements we are interested and apply the height function to
@@ -243,8 +286,7 @@ void HillsApp::BuildGeometryBuffers()
 	// sandy looking beaches, grassy low hills, and snow mountain peaks.
 	//
 
-	std::vector<Vertex> vertices(grid.Vertices.size());
-	for(size_t i = 0; i < grid.Vertices.size(); ++i)
+	/*for(size_t i = 0; i < grid.Vertices.size(); ++i)
 	{
 		XMFLOAT3 p = grid.Vertices[i].Position;
 
@@ -278,11 +320,11 @@ void HillsApp::BuildGeometryBuffers()
 			// White snow.
 			vertices[i].Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
-	}
+	}*/
 
     D3D11_BUFFER_DESC vbd;
     vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex) * grid.Vertices.size();
+	vbd.ByteWidth = sizeof(MyVertex) * vertices.size();
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     vbd.CPUAccessFlags = 0;
     vbd.MiscFlags = 0;
@@ -296,12 +338,12 @@ void HillsApp::BuildGeometryBuffers()
 
 	D3D11_BUFFER_DESC ibd;
     ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(UINT) * mGridIndexCount;
+	ibd.ByteWidth = sizeof(UINT) * mMeshIndexCount;
     ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     ibd.CPUAccessFlags = 0;
     ibd.MiscFlags = 0;
     D3D11_SUBRESOURCE_DATA iinitData;
-	iinitData.pSysMem = &grid.Indices[0];
+	iinitData.pSysMem = &indices[0];
     HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mIB));
 }
  

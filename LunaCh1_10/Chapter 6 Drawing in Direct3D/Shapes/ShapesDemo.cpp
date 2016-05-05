@@ -227,7 +227,7 @@ void ShapesApp::DrawScene()
 		XMMATRIX world = XMLoadFloat4x4(&mGridWorld);
 		mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&(world*viewProj)));
 		mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-		md3dImmediateContext->DrawIndexed(mGridIndexCount, mGridIndexOffset, mGridVertexOffset);
+		md3dImmediateContext->DrawIndexed(mMeshIndexCount, mGridIndexOffset, mGridVertexOffset);
 
 		// Draw the box.
 		world = XMLoadFloat4x4(&mBoxWorld);
@@ -365,14 +365,14 @@ void ShapesApp::BuildGeometryBuffers()
 
 	// Cache the index count of each object.
 	mBoxIndexCount      = box.Indices.size();
-	mGridIndexCount     = grid.Indices.size();
+	mMeshIndexCount     = grid.Indices.size();
 	mSphereIndexCount   = sphere.Indices.size();
 	mCylinderIndexCount = cylinder.Indices.size();
 
 	// Cache the starting index for each object in the concatenated index buffer.
 	mBoxIndexOffset      = 0;
 	mGridIndexOffset     = mBoxIndexCount;
-	mSphereIndexOffset   = mGridIndexOffset + mGridIndexCount;
+	mSphereIndexOffset   = mGridIndexOffset + mMeshIndexCount;
 	mCylinderIndexOffset = mSphereIndexOffset + mSphereIndexCount;
 	
 	UINT totalVertexCount = 
@@ -383,7 +383,7 @@ void ShapesApp::BuildGeometryBuffers()
 
 	UINT totalIndexCount = 
 		mBoxIndexCount + 
-		mGridIndexCount + 
+		mMeshIndexCount + 
 		mSphereIndexCount +
 		mCylinderIndexCount;
 
