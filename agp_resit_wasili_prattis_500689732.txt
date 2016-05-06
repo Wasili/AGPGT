@@ -1,0 +1,8 @@
+Resit AGP assessment
+Name: Wasili Prattis
+Student number: 500689732
+
+GIT project can be found here: https://github.com/Wasili/AGPGT/
+Documentation is in the main folder of the GIT repository.
+Both the PDF and the DOCX are up-to-date.
+Repository should be public, so cloning/downloading should not be an issue.
