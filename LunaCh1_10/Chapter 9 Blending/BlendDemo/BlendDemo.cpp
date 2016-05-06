@@ -210,7 +210,7 @@ void BlendDemo::UpdateScene(float dt)
 
 void BlendDemo::DrawScene()
 {
-	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
+	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::White));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	md3dImmediateContext->IASetInputLayout(mInputLayout);
@@ -300,8 +300,8 @@ void BlendDemo::OnMouseMove(WPARAM btnState, int x, int y)
 void BlendDemo::BuildGeometryBuffers()
 {
 
-	float t1 = 0.2f;
-	float t2 = 0.5f;
+	float t1 = 0.5f;
+	float t2 = 0.8f;
 	float t3 = 1.0f;
 	// Create vertex buffer
 	Vertex vertices[] =
@@ -310,9 +310,9 @@ void BlendDemo::BuildGeometryBuffers()
 		{ XMFLOAT3(+1.0f, -1.0f, +1.0f), { (0.0F), (1.0F), (0.0F), (t1) } },
 		{ XMFLOAT3(+2.0f, +1.0f, +1.0f), { (0.0F), (1.0F), (0.0F), (t1) } },
 
-		{ XMFLOAT3(+2.0f, -1.0f, +0.5f), { (1.0F), (0.0F), (0.0F), (t2) } },
-		{ XMFLOAT3(-0.0f, -1.0f, +0.5f), { (1.0F), (0.0F), (0.0F), (t2) } },
-		{ XMFLOAT3(+1.0f, +1.0f, +0.5f), { (1.0F), (0.0F), (0.0F), (t2) } },
+		{ XMFLOAT3(+2.0f, -1.0f, -0.5f), { (1.0F), (0.0F), (0.0F), (t2) } },
+		{ XMFLOAT3(-0.0f, -1.0f, -0.5f), { (1.0F), (0.0F), (0.0F), (t2) } },
+		{ XMFLOAT3(+1.0f, +1.0f, -0.5f), { (1.0F), (0.0F), (0.0F), (t2) } },
 
 		{ XMFLOAT3(+2.5f, -1.0f, +0.0f), { (0.0F), (0.0F), (1.0F), (t3) }},
 		{ XMFLOAT3(+0.5f, -1.0f, +0.0f), { (0.0F), (0.0F), (1.0F), (t3) }},

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 06 Box", "Chapter 6 Drawing in Direct3D\Box\Box.vcxproj", "{E76DB861-9CF7-4CF2-A077-78AA9E5F5303}"
 EndProject
@@ -30,10 +30,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 01 XMVECTOR", "Chapter 1 Vector Algebra\XMVECTOR\XMVECTOR.vcxproj", "{DADB6887-AAD1-48B8-BE2D-94D2C36681E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 04 Init Direct3D", "Chapter 4 Direct3D Initialization\Init Direct3D\Init Direct3D.vcxproj", "{FB063B3D-D339-46EA-818F-BC952CF14850}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ass3", "ASS3\Box\bs.vcxproj", "{30128E1F-9C4B-4896-87A9-3A10070408EC}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 23 MeshView", "Chapter 23 Meshes\MeshView\MeshView.vcxproj", "{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,26 +167,6 @@ Global
 		{FB063B3D-D339-46EA-818F-BC952CF14850}.Release|Win32.ActiveCfg = Release|Win32
 		{FB063B3D-D339-46EA-818F-BC952CF14850}.Release|Win32.Build.0 = Release|Win32
 		{FB063B3D-D339-46EA-818F-BC952CF14850}.Release|x64.ActiveCfg = Release|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Debug|Win32.Build.0 = Debug|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Debug|x64.ActiveCfg = Debug|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Profile|Win32.ActiveCfg = Release|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Profile|Win32.Build.0 = Release|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Profile|x64.ActiveCfg = Release|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Profile|x64.Build.0 = Release|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Release|Win32.ActiveCfg = Release|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Release|Win32.Build.0 = Release|Win32
-		{30128E1F-9C4B-4896-87A9-3A10070408EC}.Release|x64.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|Win32.ActiveCfg = Debug|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|Win32.Build.0 = Debug|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|x64.ActiveCfg = Debug|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|Win32.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|Win32.Build.0 = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|x64.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|x64.Build.0 = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|Win32.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|Win32.Build.0 = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

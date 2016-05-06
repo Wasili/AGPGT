@@ -234,7 +234,7 @@ float HillsApp::GetHeight(float x, float z)const
 void HillsApp::BuildGeometryBuffers()
 {
 	Assimp::Importer importer;
-	const aiScene *assScene = importer.ReadFile("models/structure.fbx", aiPostProcessSteps::aiProcess_CalcTangentSpace |
+	const aiScene *assScene = importer.ReadFile("models/monkeyface.fbx", aiPostProcessSteps::aiProcess_CalcTangentSpace |
 																			aiPostProcessSteps::aiProcess_Triangulate |
 																			aiPostProcessSteps::aiProcess_JoinIdenticalVertices |
 																			aiPostProcessSteps::aiProcess_SortByPType);
@@ -257,13 +257,13 @@ void HillsApp::BuildGeometryBuffers()
 		{
 			MyVertex vertex;
 			vertex.Pos = XMFLOAT3(assMesh->mVertices[j].x, assMesh->mVertices[j].y, assMesh->mVertices[j].z);
-			if (assMesh->HasVertexColors(j))
+			if (assMesh->HasVertexColors(i))
 			{
 				vertex.Color = XMFLOAT4(assMesh->mColors[i][j].r, assMesh->mColors[i][j].g, assMesh->mColors[i][j].b, assMesh->mColors[i][j].a);
 			}
 			else
 			{
-				vertex.Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+				vertex.Color = XMFLOAT4(255, 255, 255, 255);
 			}
 			vertices.push_back(vertex);
 		}
