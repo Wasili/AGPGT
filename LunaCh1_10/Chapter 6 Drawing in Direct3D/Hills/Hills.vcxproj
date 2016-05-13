@@ -14,7 +14,7 @@
     <ProjectGuid>{FC2B58DF-F226-4714-9798-299876818C65}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Hills</RootNamespace>
-    <ProjectName>Chapter 06 Hills</ProjectName>
+    <ProjectName>Assignment 2 - Models</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

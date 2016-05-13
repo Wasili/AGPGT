@@ -14,7 +14,7 @@
     <ProjectGuid>{94683E2F-0DBB-4D07-8549-A0BC062DDE14}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Lighting</RootNamespace>
-    <ProjectName>Chapter 07 Lighting</ProjectName>
+    <ProjectName>Assignment 4 - Lighting</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

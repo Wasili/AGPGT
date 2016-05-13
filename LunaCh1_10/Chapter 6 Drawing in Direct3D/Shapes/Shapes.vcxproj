@@ -14,7 +14,7 @@
     <ProjectGuid>{E981104E-9040-431C-823D-8E9EB680778D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Shapes</RootNamespace>
-    <ProjectName>Chapter 06 Shapes</ProjectName>
+    <ProjectName>Assignment 6 - Shading</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

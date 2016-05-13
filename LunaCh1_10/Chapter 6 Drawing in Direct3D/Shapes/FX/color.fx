@@ -169,7 +169,7 @@ float4 PS(VertexOut pin) : SV_Target
 	float shift = time;
 
 	float stripes = depth*PI*5.0*ifs*(sin(time) + 2.0);
-	float black = saw(atan2(uv.y*2.0 - 1.0, uv.x*2.0 - 1.0));//sqrt(smoothstep(0.0, .25, saw(stripes)));
+	float black = saw(atan2(uv.x*2.0 - 1.0, (1 - uv.y)*2.0 - 1.0));//sqrt(smoothstep(0.0, .25, saw(stripes)));
 	float white = smoothstep(0.75, 1.0, saw(stripes));
 
 

@@ -14,7 +14,7 @@
     <ProjectGuid>{E76DB861-9CF7-4CF2-A077-78AA9E5F5303}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Box</RootNamespace>
-    <ProjectName>Chapter 06 Box</ProjectName>
+    <ProjectName>Assignment 1 - Primitives</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

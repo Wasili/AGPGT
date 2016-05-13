@@ -330,6 +330,7 @@ void GenerateCylinderCap(GeometryGenerator::MeshData &meshData, int sliceCount, 
 
 void GenerateCylinder(GeometryGenerator::MeshData &meshData, int sliceCount, float radius, float height, float yPos)
 {
+	//generate two caps first
 	GenerateCylinderCap(meshData, sliceCount, radius, yPos, false);
 	GenerateCylinderCap(meshData, sliceCount, radius, height, true);
 

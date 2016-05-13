@@ -934,16 +934,19 @@ fxgroup
                 sincos r0.y, null, r0.y
                 add r0.y, r0.y, l(2.000000)
                 mul r0.y, r0.y, r1.y  // r0.y <- stripes
-                mul r0.w, r0.w, l(2.000000)
-                mov r1.y, l(-1.000000)
-                add r0.w, r0.w, r1.y
                 mul r0.z, r0.z, l(2.000000)
                 mov r1.y, l(-1.000000)
                 add r0.z, r0.z, r1.y
-                mov r1.y, -r0.w
-                max r1.y, r0.w, r1.y
-                mov r1.z, -r0.z
-                max r1.w, r0.z, r1.z
+                itof r1.y, l(1)
+                mov r0.w, -r0.w
+                add r0.w, r0.w, r1.y
+                mul r0.w, r0.w, l(2.000000)
+                mov r1.y, l(-1.000000)
+                add r0.w, r0.w, r1.y
+                mov r1.y, -r0.z
+                max r1.y, r0.z, r1.y
+                mov r1.z, -r0.w
+                max r1.w, r0.w, r1.z
                 min r2.x, r1.w, r1.y
                 max r2.y, r1.w, r1.y
                 div r2.y, l(1.000000, 1.000000, 1.000000, 1.000000), r2.y
@@ -963,11 +966,11 @@ fxgroup
                 add r1.w, r1.w, l(1.570796)
                 and r1.y, r1.y, r1.w
                 add r1.y, r2.x, r1.y
-                lt r1.z, r0.z, r1.z
+                lt r1.z, r0.w, r1.z
                 and r1.z, r1.z, l(0xc0490fdb)
                 add r1.y, r1.z, r1.y
-                min r1.z, r0.z, r0.w
-                max r0.z, r0.z, r0.w
+                min r1.z, r0.w, r0.z
+                max r0.z, r0.w, r0.z
                 mov r0.w, -r1.z
                 lt r0.w, r1.z, r0.w
                 mov r1.z, -r0.z
@@ -1102,7 +1105,7 @@ fxgroup
                 mov r0.w, l(1.000000)  // r0.w <- fragColor.w
                 mov o0.xyzw, r0.xyzw
                 ret 
-                // Approximately 818 instruction slots used
+                // Approximately 821 instruction slots used
                             
             };
         }

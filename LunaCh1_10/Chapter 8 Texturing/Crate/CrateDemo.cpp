@@ -339,57 +339,14 @@ void CrateApp::BuildGeometryBuffers()
 	verts[40] = GeometryGenerator::Vertex(+w2 - 0.036f, +h2 - 0.25f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	verts[41] = GeometryGenerator::Vertex(+w2 - 0.036f, -h2 + 0.24f, -d2 - 0.001f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
-	//
-	// Create the indices.
-	//
-
-	/*UINT inds[42];
-
-	// Fill in the front face index data
-	inds[0] = 0; inds[1] = 1; inds[2] = 2;
-	inds[3] = 0; inds[4] = 2; inds[5] = 3;
-
-	// Fill in the back face index data
-	inds[6] = 4; inds[7] = 5; inds[8] = 6;
-	inds[9] = 4; inds[10] = 6; inds[11] = 7;
-
-	// Fill in the top face index data
-	inds[12] = 8; inds[13] = 9; inds[14] = 10;
-	inds[15] = 8; inds[16] = 10; inds[17] = 11;
-
-	// Fill in the bottom face index data
-	inds[18] = 12; inds[19] = 13; inds[20] = 14;
-	inds[21] = 12; inds[22] = 14; inds[23] = 15;
-
-	// Fill in the left face index data
-	inds[24] = 16; inds[25] = 17; inds[26] = 18;
-	inds[27] = 16; inds[28] = 18; inds[29] = 19;
-
-	// Fill in the right face index data
-	inds[30] = 20; inds[31] = 21; inds[32] = 22;
-	inds[33] = 20; inds[34] = 22; inds[35] = 23;
-
-	//phone screen index data
-	inds[36] = 24; inds[37] = 25; inds[38] = 26;
-	inds[39] = 24; inds[40] = 26; inds[41] = 27;*/
 
 
 
 	// Cache the vertex offsets to each object in the concatenated vertex buffer.
 	mBoxVertexOffset = 0;
 	mScreenVertexOffset = 36;
-
-	// Cache the index count of each object.
-	/*mBoxIndexCount = 36;
-	mScreenIndexCount = 6;*/
-
-	// Cache the starting index for each object in the concatenated index buffer.
-	/*mBoxIndexOffset = 0;
-	mScreenIndexOffset = 36;*/
 	
 	UINT totalVertexCount = sizeof(verts) / sizeof(GeometryGenerator::Vertex);
-
-	//UINT totalIndexCount = sizeof(inds) / sizeof(UINT);
 
 	//
 	// Extract the vertex elements we are interested in and pack the
@@ -416,26 +373,5 @@ void CrateApp::BuildGeometryBuffers()
     D3D11_SUBRESOURCE_DATA vinitData;
     vinitData.pSysMem = &vertices[0];
     HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mBoxVB));
-
-	//
-	// Pack the indices of all the meshes into one index buffer.
-	//
-
-
-	/*std::vector<UINT> indices(totalIndexCount);
-	for (size_t i = 0; i < totalIndexCount; i++)
-	{
-		indices[i] = inds[i];
-	}
-
-	D3D11_BUFFER_DESC ibd;
-    ibd.Usage = D3D11_USAGE_IMMUTABLE;
-    ibd.ByteWidth = sizeof(UINT) * totalIndexCount;
-    ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    ibd.CPUAccessFlags = 0;
-    ibd.MiscFlags = 0;
-    D3D11_SUBRESOURCE_DATA iinitData;
-    iinitData.pSysMem = &indices[0];
-    HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mBoxIB));*/
 }
  

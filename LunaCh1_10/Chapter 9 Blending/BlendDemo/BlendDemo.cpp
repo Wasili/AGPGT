@@ -159,21 +159,8 @@ bool BlendDemo::Init()
 	Effects::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 	BuildGeometryBuffers();
-	//BuildSphereCylinderBuffers();
 	BuildFX();
 	BuildVertexLayout();
-
-
-	/*
-	D3D11_RASTERIZER_DESC wireframeDesc;
-	ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
-	wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
-	wireframeDesc.CullMode = D3D11_CULL_BACK;
-	wireframeDesc.FrontCounterClockwise = false;
-	wireframeDesc.DepthClipEnable = true;
-
-	HR(md3dDevice->CreateRasterizerState(&wireframeDesc, &mWireframeRS));
-	*/
 
 	return true;
 }

@@ -14,7 +14,7 @@
     <ProjectGuid>{D450380B-CD03-456C-B874-4639827A617C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Crate</RootNamespace>
-    <ProjectName>Chapter 08 Crate</ProjectName>
+    <ProjectName>Assignment 5 - Texturing</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

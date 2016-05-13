@@ -206,6 +206,7 @@ bool toon = false;
 
 void SetToonShading(XMFLOAT4 &diffuseTracker, XMFLOAT4 &diffuse, XMFLOAT4 &specularTracker, XMFLOAT4 &specular)
 {
+	//apply toon lighting rules
 	if (diffuseTracker.x <= 0.0F) diffuse.x = 0.4F;
 	else if (diffuseTracker.x > 0.0F && diffuseTracker.x <= 0.5F) diffuse.x = 0.6F;
 	else if (diffuseTracker.x > 0.5F && diffuseTracker.x <= 1.0F) diffuse.x = 1.0F;
